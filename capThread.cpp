@@ -3,25 +3,23 @@
 
 capThread::capThread(void)
 {
-    resetFlag();
+    setRunningStatus(false);
 }
 
 void capThread::setPcapPtr(pcap_t *ptr){
     this->pcap_ptr = ptr;
 }
 
-void capThread::resetFlag(void){
-    this->isRunning = false;
-}
-
-void capThread::setFlag(void){
-    this->isRunning = true;
+void capThread::setRunningStatus(bool status){
+    this->isRunning = status;
 }
 
 void capThread::run(){
     while (isRunning){
         int res = pcap_next_ex(pcap_ptr,&pkt_hdr,&pkt_data);
         if (!res) continue;
+
+        //now you have got a pkt
 
         //time handling
         local_time_sec = pkt_hdr->ts.tv_sec;

@@ -9,8 +9,7 @@ class capThread:public QThread
 public:
     capThread(void);
     void setPcapPtr(pcap_t *ptr);
-    void setFlag(void);
-    void resetFlag(void);
+    void setRunningStatus(bool status);
     void run() override;
 private:
     bool isRunning;

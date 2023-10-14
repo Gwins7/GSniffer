@@ -17,7 +17,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow(void);
     void ListNIC(void);
-    int PktCapture(void);
+    int OpenCurDev(void);
 
 private slots:
     void on_NICBox_currentIndexChanged(int index);
