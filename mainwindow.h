@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "pcap.h"
+#include "winsock2.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -13,9 +15,19 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    ~MainWindow(void);
+    void ListNIC(void);
+    int PktCapture(void);
+
+private slots:
+    void on_NICBox_currentIndexChanged(int index);
 
 private:
     Ui::MainWindow *ui;
+    pcap_if_t *all_dev;
+    pcap_if_t *cur_dev;
+    pcap_t *pcap_ptr;
+    char err_buf[PCAP_ERRBUF_SIZE];
+
 };
 #endif // MAINWINDOW_H

@@ -26,6 +26,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(GSniffer
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
+        capThread.h capThread.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET GSniffer APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -49,7 +50,13 @@ else()
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif()
 
-target_link_libraries(GSniffer PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_include_directories(GSniffer PRIVATE ${PROJECT_SOURCE_DIR}/npcap_sdk/Include)
+
+target_link_libraries(GSniffer PRIVATE
+    Qt${QT_VERSION_MAJOR}::Widgets
+    ${PROJECT_SOURCE_DIR}/npcap_sdk/Lib/x64/wpcap.lib
+    ws2_32
+)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
