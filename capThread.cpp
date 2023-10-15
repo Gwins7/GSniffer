@@ -1,4 +1,6 @@
 #include "capThread.h"
+#include "pktfmt.h"
+#include "datapkt.h"
 #include <QDebug>
 
 capThread::capThread(void)
@@ -16,15 +18,43 @@ void capThread::setRunningStatus(bool status){
 
 void capThread::run(){
     while (isRunning){
-        int res = pcap_next_ex(pcap_ptr,&pkt_hdr,&pkt_data);
+        int res = pcap_next_ex(pcap_ptr,&pcap_pkt_hdr,&pcap_pkt_data);
         if (!res) continue;
 
         //now you have got a pkt
 
         //time handling
-        local_time_sec = pkt_hdr->ts.tv_sec;
-        localtime_s(&local_time, &local_time_sec);//convert
-        strftime(time_string,sizeof(time_string),"%H:%M:%S",&local_time);
-        qDebug()<<time_string;
+        loc_time_sec = pcap_pkt_hdr->ts.tv_sec;
+        localtime_s(&loc_time, &loc_time_sec);//convert
+        strftime(time_str,sizeof(time_str),"%H:%M:%S",&loc_time);
+        QString info = "";
+        int pkt_type = HandleEthPkt(pcap_pkt_data,info);
+        if (pkt_type) {
+            //pkt_type != 0
+            DataPkt pkt;
+            int len = pcap_pkt_hdr->len;
+            pkt.setInfo(info);
+            pkt.setDataLen(len);
+            pkt.setTimestamp(time_str);
+            emit SendMsg(pkt);  //send pkt to main thread
+        }
     }
+}
+
+int capThread::HandleEthPkt(const u_char *pkt_content, QString &info){
+    // ret val: pkt_type
+    eth_hdr_t *ether_hdr = (eth_hdr_t *)pkt_content;
+    u_short content_type = ntohs(ether_hdr->type);
+    switch(content_type) {
+        case 0x0800:{ //ipv4
+        info = "ipv4";
+            break;
+        }
+        case 0x0806:{ //arp
+            info = "arp";
+            break;
+        }
+        default:return 0;
+    }
+    return (int)content_type;
 }

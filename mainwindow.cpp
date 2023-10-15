@@ -34,6 +34,9 @@ MainWindow::MainWindow(QWidget *parent)
         }
     });
 
+    // pkt: capThread::SendMsg -> MainWindow::HandleMsg
+    connect(cap_thread,&capThread::SendMsg,this,&MainWindow::HandleMsg);
+
 }
 
 MainWindow::~MainWindow(void)
@@ -76,3 +79,6 @@ int MainWindow::OpenCurDev(void){
     return 0;
 }
 
+void MainWindow::HandleMsg(DataPkt pkt){
+    qDebug()<<pkt.getTimestamp()<<" "<< pkt.getInfo();
+}

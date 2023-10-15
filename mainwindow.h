@@ -2,8 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "pcap.h"
 #include "winsock2.h"
+#include "pcap.h"
+#include "datapkt.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -18,6 +19,9 @@ public:
     ~MainWindow(void);
     void ListNIC(void);
     int OpenCurDev(void);
+
+public slots:
+    void HandleMsg(DataPkt pkt);
 
 private slots:
     void on_NICBox_currentIndexChanged(int index);

@@ -26,7 +26,9 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(GSniffer
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        capThread.h capThread.cpp
+        capthread.h capthread.cpp
+        pktfmt.h
+        datapkt.h datapkt.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET GSniffer APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

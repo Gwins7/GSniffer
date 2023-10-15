@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>GSniffer</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -84,7 +84,7 @@
    </widget>
    <widget class="QMenu" name="menurun">
     <property name="title">
-     <string>run</string>
+     <string>control</string>
     </property>
     <addaction name="actionrunstop"/>
     <addaction name="actionclear"/>
