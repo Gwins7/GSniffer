@@ -9,7 +9,7 @@ class capThread:public QThread
     Q_OBJECT
 
 public:
-    capThread(void);
+    capThread();
     void setPcapPtr(pcap_t *ptr);
     void setRunningStatus(bool status);
     void run() override;
@@ -33,6 +33,8 @@ private:
     char time_str[16];
 
 protected:
+    QString getEthAddr(u_char *addr);
+    QString getIpAddr(u_char *addr);
     static QString HextoS (u_char *num,int size);
 };
 

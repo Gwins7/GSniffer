@@ -15,8 +15,11 @@
 class DataPkt
 {
 public:
-    const u_char *pkt_content;
+
     DataPkt();
+    u_char *getPktContent();
+    void FreePktContent();
+    void AllocPktContent(const u_char *pkt_content, int size);
     QString getDataLen() const;
     void setDataLen(u_int newDataLen);
     QString getTimestamp() const;
@@ -26,14 +29,22 @@ public:
     QString getPktType() const;
     void setPktType(int new_pkt_type);
 
+    QString getEthSrc();
+    QString getEthDst();
+    QString getIpSrc();
+    QString getIpDst();
+
 private:
+    u_char *pkt_content;
     u_int data_len;
     QString timestamp;
     QString info;
     int pkt_type;
 
 protected:
-    static QString HextoS (char *num,int size);
+    QString getEthAddr(u_char *addr);
+    QString getIpAddr(u_char *addr);
+    static QString HextoS (u_char *num,int size);
 };
 
 #endif // DATAPKT_H

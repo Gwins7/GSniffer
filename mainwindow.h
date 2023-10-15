@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QVector>
 #include "winsock2.h"
 #include "pcap.h"
 #include "datapkt.h"
@@ -16,9 +17,9 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QWidget *parent = nullptr);
-    ~MainWindow(void);
-    void ListNIC(void);
-    int OpenCurDev(void);
+    ~MainWindow();
+    void ListNIC();
+    int OpenCurDev();
 
 public slots:
     void HandleMsg(DataPkt pkt);
@@ -26,12 +27,18 @@ public slots:
 private slots:
     void on_NICBox_currentIndexChanged(int index);
 
+    void on_PktTable_cellClicked(int row, int column);
+
 private:
     Ui::MainWindow *ui;
+    QVector<DataPkt> pkt_vec;
+    int pkt_count;
+
     pcap_if_t *all_dev;
     pcap_if_t *cur_dev;
     pcap_t *pcap_ptr;
     char err_buf[PCAP_ERRBUF_SIZE];
 
+    int row_chosen;
 };
 #endif // MAINWINDOW_H

@@ -33,9 +33,12 @@ void capThread::run(){
             //pkt_type != 0
             DataPkt pkt;
             int len = pcap_pkt_hdr->len;
+            pkt.AllocPktContent(pcap_pkt_data,len);
             pkt.setInfo(info);
             pkt.setDataLen(len);
             pkt.setTimestamp(time_str);
+            pkt.setPktType(pkt_type);
+
             emit SendMsg(pkt);  //send pkt to main thread
         }
     }
@@ -51,7 +54,7 @@ int capThread::HandleEthPkt(const u_char *pkt_content, QString &info){
             int ip_protocol = HandleIpPkt(pkt_content,ip_pld_len);
             switch(ip_protocol){
                 case 1:{ //ICMP
-                    info = "[icmp]";//todo
+                    //todo
                     return TYPE_ICMP;
                 }
                 case 6:{ //TCP
@@ -144,30 +147,10 @@ QString capThread::HandleArpPkt(const u_char *pkt_content){
     u_short arp_op = ntohs(arp_hdr->op_code);
 
     //convert addr to QString
-    u_char *srcipaddr = arp_hdr->src_ip_addr;
-    QString arp_src_ip_addr =  QString::number(*srcipaddr) + "." +
-                               QString::number(*(srcipaddr+1)) + "." +
-                               QString::number(*(srcipaddr+2)) + "." +
-                               QString::number(*(srcipaddr+3));
-    u_char *dstipaddr = arp_hdr->dst_ip_addr;
-    QString arp_dst_ip_addr =  QString::number(*dstipaddr) + "." +
-                               QString::number(*(dstipaddr+1)) + "." +
-                               QString::number(*(dstipaddr+2)) + "." +
-                               QString::number(*(dstipaddr+3));
-    u_char *srcethaddr = arp_hdr->src_eth_addr;
-    QString arp_src_eth_addr = HextoS(srcethaddr,1) + ":" +
-                               HextoS((srcethaddr+1),1) + ":" +
-                               HextoS((srcethaddr+2),1) + ":" +
-                               HextoS((srcethaddr+3),1) + ":" +
-                               HextoS((srcethaddr+4),1) + ":" +
-                               HextoS((srcethaddr+5),1);
-    u_char *dstethaddr = arp_hdr->dst_eth_addr;
-    QString arp_dst_eth_addr = HextoS(dstethaddr,1) + ":" +
-                               HextoS((dstethaddr+1),1) + ":" +
-                               HextoS((dstethaddr+2),1) + ":" +
-                               HextoS((dstethaddr+3),1) + ":" +
-                               HextoS((dstethaddr+4),1) + ":" +
-                               HextoS((dstethaddr+5),1);
+    QString arp_src_ip_addr =  getIpAddr(arp_hdr->dst_ip_addr);
+    QString arp_dst_ip_addr =  getIpAddr(arp_hdr->dst_ip_addr);
+    QString arp_src_eth_addr = getEthAddr(arp_hdr->src_eth_addr);
+//    QString arp_dst_eth_addr = getEthAddr(arp_hdr->dst_eth_addr);
 
     QString arp_info;
     if(arp_op == 1) arp_info = "Who was " + arp_dst_ip_addr + "? Tell " + arp_src_ip_addr + " at " + arp_src_eth_addr; // query
@@ -187,3 +170,22 @@ QString capThread::HextoS(u_char *num,int size){ //hex-num to string
     }
     return res;
 }
+
+QString capThread::getEthAddr(u_char *addr){
+    QString res = HextoS(addr,1) + ":" +
+                  HextoS((addr+1),1) + ":" +
+                  HextoS((addr+2),1) + ":" +
+                  HextoS((addr+3),1) + ":" +
+                  HextoS((addr+4),1) + ":" +
+                  HextoS((addr+5),1);
+    return res;
+}
+
+QString capThread::getIpAddr(u_char *addr){
+    QString res = QString::number(*addr) + "." +
+                  QString::number(*(addr+1)) + "." +
+                  QString::number(*(addr+2)) + "." +
+                  QString::number(*(addr+3));
+    return res;
+}
+
