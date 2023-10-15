@@ -48,8 +48,8 @@ int capThread::HandleEthPkt(const u_char *pkt_content, QString &info){
     switch(content_type) {
         case 0x0800:{ //ipv4
             int ip_pld_len = 0;
-            int ip_procotol = HandleIpPkt(pkt_content,ip_pld_len);
-            switch(ip_procotol){
+            int ip_protocol = HandleIpPkt(pkt_content,ip_pld_len);
+            switch(ip_protocol){
                 case 1:{ //ICMP
                     info = "[icmp]";//todo
                     return TYPE_ICMP;
