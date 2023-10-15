@@ -8,29 +8,35 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    cur_dev = 0; //init
     ListNIC(); // display NIC in NICBox
     capThread *cap_thread = new capThread;
     static bool cap_status = false;
 
     connect(ui->actionrunstop,&QAction::triggered,this,[=]{ // set action on run/stop
-        cap_status = !cap_status; // on - off
-        if (cap_status) { // on
-            if (OpenCurDev() != -1){
-                cap_thread->setRunningStatus(true);
-                cap_thread->setPcapPtr(pcap_ptr);
-                cap_thread->start();
-                ui->actionrunstop->setText("stop");
-                ui->NICBox->setEnabled(false);
+        if (cur_dev){
+            cap_status = !cap_status; // on - off
+            if (cap_status) { // on
+                if (OpenCurDev() != -1){
+                    cap_thread->setRunningStatus(true);
+                    cap_thread->setPcapPtr(pcap_ptr);
+                    cap_thread->start();
+                    ui->actionrunstop->setText("stop");
+                    ui->NICBox->setEnabled(false);
+                }
+            }
+            else {
+                cap_thread->setRunningStatus(false);
+                cap_thread->quit();
+                cap_thread->wait(); //wait to release resources
+                ui->actionrunstop->setText("run");
+                ui->NICBox->setEnabled(true);
+                pcap_close(pcap_ptr);
+                pcap_ptr = NULL;
             }
         }
         else {
-            cap_thread->setRunningStatus(false);
-            cap_thread->quit();
-            cap_thread->wait(); //wait to release resources
-            ui->actionrunstop->setText("run");
-            ui->NICBox->setEnabled(true);
-            pcap_close(pcap_ptr);
-            pcap_ptr = NULL;
+            statusBar()->showMessage("You haven't choose your NIC!");
         }
     });
 
@@ -61,7 +67,10 @@ void MainWindow::ListNIC(void){
 
 void MainWindow::on_NICBox_currentIndexChanged(int index)
 {
-    if (!index) return;
+    if (!index) {
+        cur_dev = 0;
+        return;
+    }
     int i;
     for (cur_dev = all_dev,i = 1; i!=index; cur_dev = cur_dev->next, i++);
     //set cur_dev to the dev you choose

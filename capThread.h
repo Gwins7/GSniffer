@@ -15,6 +15,10 @@ public:
     void run() override;
 
     int HandleEthPkt(const u_char *pkt_content, QString &info);
+    int HandleIpPkt (const u_char *pkt_content, int &ip_pld_len);
+    int HandleTcpPkt(const u_char *pkt_content, QString &info, int ip_pld_len);
+    int HandleUdpPkt(const u_char *pkt_content, QString &info);
+    QString HandleArpPkt(const u_char *pkt_content);
 
 signals: // send pkt_data across the threads
     void SendMsg(DataPkt pkt);
@@ -27,6 +31,9 @@ private:
     time_t loc_time_sec;
     struct tm loc_time;
     char time_str[16];
+
+protected:
+    static QString HextoS (u_char *num,int size);
 };
 
 #endif // CAPTHREAD_H

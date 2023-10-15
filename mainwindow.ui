@@ -61,9 +61,6 @@
         </column>
        </widget>
       </item>
-      <item>
-       <widget class="QTextBrowser" name="PktContentBrowser"/>
-      </item>
      </layout>
     </item>
    </layout>

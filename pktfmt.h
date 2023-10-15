@@ -6,6 +6,14 @@ typedef unsigned short u_short;
 typedef unsigned int u_int;
 typedef unsigned long u_long;
 
+#define ETH_HDR_LEN 14
+#define IP_HDR_LEN 20
+#define TCP_HDR_LEN 20
+#define UDP_HDR_LEN 8
+#define ICMP_HDR_LEN 8
+#define ARP_HDR_LEN 28
+#define DNS_HDR_LEN 12
+
 // Ethernet header
 /*
 +-------------------+-----------------+------+
@@ -73,7 +81,7 @@ typedef struct tcp_hdr{ //20 bytes
     u_short dst_port;
     u_int seq;
     u_int ack;
-    u_char hdr_len;
+    u_char hdr_len; // high 4 bit * 4
     u_char flags;
     u_short window_size;
     u_short checksum;

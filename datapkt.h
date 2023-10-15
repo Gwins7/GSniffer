@@ -4,6 +4,14 @@
 #include "pktfmt.h"
 #include <QString>
 
+#define TYPE_ARP 1
+#define TYPE_ICMP 2
+#define TYPE_TCP 3
+#define TYPE_UDP 4
+#define TYPE_DNS 5
+#define TYPE_TLS 6
+#define TYPE_SSL 7
+
 class DataPkt
 {
 public:

@@ -44,13 +44,13 @@ void DataPkt::setInfo(const QString &new_info)
 QString DataPkt::getPktType() const
 {
     switch(this->pkt_type){
-    case 1: return "ARP";
-    case 2: return "ICMP";
-    case 3: return "TCP";
-    case 4: return "UDP";
-    case 5: return "DNS";
-    case 6: return "TLS";
-    case 7: return "SSL";
+    case TYPE_ARP: return "ARP";
+    case TYPE_ICMP: return "ICMP";
+    case TYPE_TCP: return "TCP";
+    case TYPE_UDP: return "UDP";
+    case TYPE_DNS: return "DNS";
+    case TYPE_TLS: return "TLS";
+    case TYPE_SSL: return "SSL";
     default: return "";
     }
 }
