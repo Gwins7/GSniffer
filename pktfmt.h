@@ -39,7 +39,7 @@ typedef struct eth_hdr{ //14 bytes
 */
 
 typedef struct ip_hdr{ //20 bytes
-    u_char ver_n_headlen;
+    u_char ver_n_hdrlen;
     u_char TOS;
     u_short tot_len;
     u_short ident;

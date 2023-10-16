@@ -24,7 +24,7 @@
 #define INFO_IP_ADDR_SRC 0
 #define INFO_IP_ADDR_DST 1
 #define INFO_IP_VERSION 2
-#define INFO_IP_HEAD_LEN 3
+#define INFO_IP_HDR_LEN 3
 #define INFO_IP_TOS 4
 #define INFO_IP_TOT_LEN 5
 #define INFO_IP_IDENT 6
@@ -56,11 +56,15 @@
 #define INFO_TCP_CHECKSUM 7
 #define INFO_TCP_URG 8
 
+#define INFO_TCP_PLD_LEN 9
+
 //udp info
 #define INFO_UDP_SRC_PORT 0
 #define INFO_UDP_DST_PORT 1
 #define INFO_UDP_DATA_LEN 2
 #define INFO_UDP_CHECKSUM 3
+
+#define INFO_UDP_PLD_LEN 4
 
 //icmp info
 #define INFO_ICMP_TYPE 0

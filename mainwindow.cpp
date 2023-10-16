@@ -202,7 +202,7 @@ void MainWindow::on_PktTable_cellClicked(int row, int column) // prepare tree wi
             ui->PktTree->addTopLevelItem(ip_tree_item);
 
             ip_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Version: " + pkt_vec[row_chosen].getIpInfo(INFO_IP_VERSION)));
-            ip_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Header Length: " + pkt_vec[row_chosen].getIpInfo(INFO_IP_HEAD_LEN) + " bytes"));
+            ip_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Header Length: " + pkt_vec[row_chosen].getIpInfo(INFO_IP_HDR_LEN) + " bytes"));
             ip_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Differentiated Services Field (TOS): " + pkt_vec[row_chosen].getIpInfo(INFO_IP_TOS)));
             ip_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Total Length: " + pkt_vec[row_chosen].getIpInfo(INFO_IP_TOT_LEN)));
             ip_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Identfication: " + pkt_vec[row_chosen].getIpInfo(INFO_IP_IDENT)));
@@ -216,17 +216,51 @@ void MainWindow::on_PktTable_cellClicked(int row, int column) // prepare tree wi
 
             //tcp
             if (pkt_vec[row_chosen].getPktType() == "TCP"){
-
+                QString tcp_src_port = pkt_vec[row_chosen].getTcpInfo(INFO_TCP_SRC_PORT);
+                QString tcp_dst_port = pkt_vec[row_chosen].getTcpInfo(INFO_TCP_DST_PORT);
+                QString tcp_seq = pkt_vec[row_chosen].getTcpInfo(INFO_TCP_SEQ);
+                QString tcp_ack = pkt_vec[row_chosen].getTcpInfo(INFO_TCP_ACK);
+                QString tcp_pld_len = pkt_vec[row_chosen].getTcpInfo(INFO_TCP_PLD_LEN);    
+                QString tcp_tree_str = "Transmission Control Protocol, Src Port:" + tcp_src_port + " Dst Port:" + tcp_dst_port
+                                        + " Seq:" + tcp_seq + " Ack:" + tcp_ack + " Len:" + tcp_pld_len;
+                QTreeWidgetItem *tcp_tree_item = new QTreeWidgetItem(QStringList()<<tcp_tree_str);
+                ui->PktTree->addTopLevelItem(tcp_tree_item);
+                tcp_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Source Port: " + tcp_src_port));
+                tcp_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Destination Port: " + tcp_dst_port));
+                tcp_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Sequence Number: " + tcp_seq));
+                tcp_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Acknowledge Number: " + tcp_ack));
+                tcp_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Header Length: " + pkt_vec[row_chosen].getTcpInfo(INFO_TCP_HDR_LEN) + " bytes"));
+                tcp_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Flags: " + pkt_vec[row_chosen].getTcpInfo(INFO_TCP_FLAGS)));
+                tcp_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Window Size: " + pkt_vec[row_chosen].getTcpInfo(INFO_TCP_WINDOW_SIZE)));
+                tcp_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Checksum: " + pkt_vec[row_chosen].getTcpInfo(INFO_TCP_CHECKSUM)));
+                tcp_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Urgent Pointer: " + pkt_vec[row_chosen].getTcpInfo(INFO_TCP_URG)));
+                tcp_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Payload Length: " + tcp_pld_len + " bytes"));
             }
 
             //udp
             else if (pkt_vec[row_chosen].getPktType() == "UDP"){
-
+                QString udp_src_port = pkt_vec[row_chosen].getUdpInfo(INFO_UDP_SRC_PORT);
+                QString udp_dst_port = pkt_vec[row_chosen].getUdpInfo(INFO_UDP_DST_PORT);
+                QString udp_tree_str = "User Datagram Protocol, Src Port:" + udp_src_port + " Dst port:" + udp_dst_port;
+                QTreeWidgetItem *udp_tree_item = new QTreeWidgetItem(QStringList()<<udp_tree_str);
+                ui->PktTree->addTopLevelItem(udp_tree_item);
+                udp_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Source Port: " + udp_src_port));
+                udp_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Destination Port: " + udp_dst_port));
+                udp_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Data Length: " + pkt_vec[row_chosen].getUdpInfo(INFO_UDP_DATA_LEN) + " bytes"));
+                udp_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Checksum: " + pkt_vec[row_chosen].getUdpInfo(INFO_UDP_CHECKSUM)));
+                udp_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Payload Length: " + pkt_vec[row_chosen].getUdpInfo(INFO_UDP_PLD_LEN) + " bytes"));
             }
             
             //icmp
             else if (pkt_vec[row_chosen].getPktType() == "ICMP"){
-
+                QString icmp_tree_str = "Internet Control Message Protocol";
+                QTreeWidgetItem *icmp_tree_item = new QTreeWidgetItem(QStringList()<<icmp_tree_str);
+                ui->PktTree->addTopLevelItem(icmp_tree_item);
+                icmp_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Type: " + pkt_vec[row_chosen].getIcmpInfo(INFO_ICMP_TYPE)));
+                icmp_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Code: " + pkt_vec[row_chosen].getIcmpInfo(INFO_ICMP_CODE)));
+                icmp_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Checksum: " + pkt_vec[row_chosen].getIcmpInfo(INFO_ICMP_CHECKSUM)));
+                icmp_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Identifier: " + pkt_vec[row_chosen].getIcmpInfo(INFO_ICMP_IDENT)));
+                icmp_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Sequence Number: " + pkt_vec[row_chosen].getIcmpInfo(INFO_ICMP_SEQ)));
             }
 
             //other
@@ -239,8 +273,18 @@ void MainWindow::on_PktTable_cellClicked(int row, int column) // prepare tree wi
         }
     //arp
         else if (pkt_vec[row_chosen].getPktType() == "ARP"){
-
-
+            QString arp_tree_str = "Address Resolution Protocol";
+            QTreeWidgetItem *arp_tree_item = new QTreeWidgetItem(QStringList()<<arp_tree_str);
+            ui->PktTree->addTopLevelItem(arp_tree_item);
+            arp_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Hardware type: " + pkt_vec[row_chosen].getArpInfo(INFO_ARP_HW_TYPE)));
+            arp_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Protocol type: " + pkt_vec[row_chosen].getArpInfo(INFO_ARP_PROTOCOL_TYPE)));
+            arp_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Hardware size: " + pkt_vec[row_chosen].getArpInfo(INFO_ARP_ETH_LEN)));
+            arp_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Protocol size: " + pkt_vec[row_chosen].getArpInfo(INFO_ARP_IP_LEN)));
+            arp_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Opcode: " + pkt_vec[row_chosen].getArpInfo(INFO_ARP_OP_CODE)));
+            arp_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Sender MAC address: " + pkt_vec[row_chosen].getArpInfo(INFO_ARP_MAC_SRC)));
+            arp_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Sender IP address: " + pkt_vec[row_chosen].getArpInfo(INFO_ARP_MAC_DST)));
+            arp_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Target MAC address: " + pkt_vec[row_chosen].getArpInfo(INFO_ARP_IP_SRC)));
+            arp_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Target IP address: " + pkt_vec[row_chosen].getArpInfo(INFO_ARP_IP_DST)));
         }
     //others
         else {

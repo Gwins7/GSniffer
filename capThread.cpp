@@ -74,7 +74,7 @@ int capThread::HandleEthPkt(const u_char *pkt_content, QString &info){
 
 int capThread::HandleIpPkt(const u_char *pkt_content, int &ip_pld_len){
     ip_hdr_t *ip_hdr = (ip_hdr_t *)(pkt_content + ETH_HDR_LEN);
-    ip_pld_len = (ntohs(ip_hdr->tot_len) - ((ip_hdr->ver_n_headlen & 0x0f) << 2));
+    ip_pld_len = (ntohs(ip_hdr->tot_len) - ((ip_hdr->ver_n_hdrlen & 0x0f) << 2));
     return ip_hdr->protocol;
 }
 
