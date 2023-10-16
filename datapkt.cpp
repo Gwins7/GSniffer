@@ -194,7 +194,7 @@ QString DataPkt::getArpInfo(int info_type){
     QString res = "";
     switch (info_type){
         case INFO_ARP_HW_TYPE:{
-                
+                res = QString::number(arp_hdr->hardware_type);
                 break;
                 }
         case INFO_ARP_PROTOCOL_TYPE:{

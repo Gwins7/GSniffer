@@ -4,7 +4,6 @@
 #include "pktfmt.h"
 #include "macro.h"
 #include <QString>
-
 class DataPkt
 {
 public:

@@ -176,7 +176,68 @@ int capThread::HandleArpPkt(const u_char *pkt_content, QString &info){
 }
 
 int capThread::HandleIcmpPkt(const u_char *pkt_content, QString &info){
+    icmp_hdr_t *icmp_hdr = (icmp_hdr_t *) (pkt_content + ETH_HDR_LEN + IP_HDR_LEN);
+    u_char icmp_type = icmp_hdr->type;
+    u_char icmp_code = icmp_hdr->code;
+    QString res = "";
+    switch (icmp_type) {
+    case 0:{
+        if(!icmp_code)
+            res = "Echo response (ping)";
+        break;
+    }
+    case 3:{
+        switch (icmp_code) {
+            case 0:{
+                res = "Network unreachable";
+                break;
+            }
+            case 1:{
+                res = "Host unreachable";
+                break;
+            }
+            case 2:{
+                res = "Protocol unreachable";
+                break;
+            }
+            case 3:{
+                res = "Port unreachable";
+                break;
+            }
+            case 4:{
+                res = "Fragmentation is required, but DF is set";
+                break;
+            }
+            case 5:{
+                res = "Source route selection failed";
+                break;
+            }
+            case 6:{
+                res = "Unknown target network";
+                break;
+            }
+            default:break;
+        }
+        break;
+    }
+    case 4:{
+        res = "Source station suppression [congestion control]";
+        break;
+    }
+    case 5:{
+        res = "Relocation";
+        break;
+    }
+    case 8:{
+        if(!icmp_code)
+            res = "Echo request (ping)";
+        break;
+    }
+    default:break;
+    }
 
+    info += res;
+    return TYPE_ICMP;
 }
 
 
