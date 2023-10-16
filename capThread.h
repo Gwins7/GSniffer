@@ -18,7 +18,7 @@ public:
     int HandleIpPkt (const u_char *pkt_content, int &ip_pld_len);
     int HandleTcpPkt(const u_char *pkt_content, QString &info, int ip_pld_len);
     int HandleUdpPkt(const u_char *pkt_content, QString &info);
-    QString HandleArpPkt(const u_char *pkt_content);
+    int HandleArpPkt(const u_char *pkt_content, QString &info);
 
 signals: // send pkt_data across the threads
     void SendMsg(DataPkt pkt);

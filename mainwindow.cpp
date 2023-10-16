@@ -35,7 +35,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->PktTable->setColumnWidth(3,150);
     ui->PktTable->setColumnWidth(4,100);
     ui->PktTable->setColumnWidth(5,100);
-    ui->PktTable->setColumnWidth(6,500);
+    ui->PktTable->setColumnWidth(6,750);
 
     ui->PktTable->setShowGrid(false); // disable column separate line display
     ui->PktTable->verticalHeader()->setVisible(false); // disable table No.
@@ -91,6 +91,7 @@ MainWindow::MainWindow(QWidget *parent)
         ui->PktTable->clearContents();
         ui->PktTable->setRowCount(0);
         pkt_count = 0;
+        row_chosen = -1;
     });
 
     // pkt: capThread::SendMsg -> MainWindow::HandleMsg

@@ -80,10 +80,10 @@ QString DataPkt::HextoS(u_char *num,int size){ //hex-num to string
     QString res = "";
     for (int i=0;i<size;i++) {
         char h = num[i] >> 4;
-        h = (h > 0x09) ? h - 0x09 + 0x41 : h + 0x30;
+        h = (h > 0x09) ? h - 0x0a + 0x41 : h + 0x30;
         res.append(h);
         char l = num[i] & 0x0f;
-        l = (l > 0x09) ? l - 0x09 + 0x41 : l + 0x30;
+        l = (l > 0x09) ? l - 0x0a + 0x41 : l + 0x30;
         res.append(l);
     }
     return res;
@@ -110,14 +110,14 @@ QString DataPkt::getIpAddr(u_char *addr){
 QString DataPkt::getEthSrc(){
     eth_hdr_t *eth_hdr = (eth_hdr_t *)(pkt_content);
     QString res = getEthAddr(eth_hdr->mac_src);
-    if (res == "FF:FF:FF:FF:FF:FF") res += "(broadcast)";
+    if (res == "FF:FF:FF:FF:FF:FF") res = "Broadcast";
     return res;
 }
 
 QString DataPkt::getEthDst(){
     eth_hdr_t *eth_hdr = (eth_hdr_t *)(pkt_content);
     QString res = getEthAddr(eth_hdr->mac_dst);
-    if (res == "FF:FF:FF:FF:FF:FF") res += "(broadcast)";
+    if (res == "FF:FF:FF:FF:FF:FF") res = "Broadcast";
     return res;
 }
 

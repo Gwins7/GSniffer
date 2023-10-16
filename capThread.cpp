@@ -66,8 +66,7 @@ int capThread::HandleEthPkt(const u_char *pkt_content, QString &info){
             }
         }
         case 0x0806:{ //arp
-            info = HandleArpPkt(pkt_content);
-            return TYPE_ARP;
+            return HandleArpPkt(pkt_content,info);
         }
         default:return 0;
     }
@@ -141,31 +140,33 @@ int capThread::HandleUdpPkt(const u_char *pkt_content, QString &info){
     }
 }
 
-QString capThread::HandleArpPkt(const u_char *pkt_content){
+int capThread::HandleArpPkt(const u_char *pkt_content, QString &info){
     arp_hdr_t *arp_hdr = (arp_hdr_t *)(pkt_content + ETH_HDR_LEN); // ip level
 
     u_short arp_op = ntohs(arp_hdr->op_code);
 
     //convert addr to QString
-    QString arp_src_ip_addr =  getIpAddr(arp_hdr->dst_ip_addr);
+    QString arp_src_ip_addr =  getIpAddr(arp_hdr->src_ip_addr);
     QString arp_dst_ip_addr =  getIpAddr(arp_hdr->dst_ip_addr);
     QString arp_src_eth_addr = getEthAddr(arp_hdr->src_eth_addr);
 //    QString arp_dst_eth_addr = getEthAddr(arp_hdr->dst_eth_addr);
 
     QString arp_info;
-    if(arp_op == 1) arp_info = "Who was " + arp_dst_ip_addr + "? Tell " + arp_src_ip_addr + " at " + arp_src_eth_addr; // query
+    if(arp_op == 1) arp_info = "Who has " + arp_dst_ip_addr + "? Tell " + arp_src_ip_addr; // query
     else if (arp_op == 2) arp_info = arp_src_ip_addr + " is at " + arp_src_eth_addr; // response
-    return arp_info;
+    else arp_info = "other ARP packet, op = " + QString::number(arp_op);
+    info += arp_info;
+    return TYPE_ARP;
 }
 
 QString capThread::HextoS(u_char *num,int size){ //hex-num to string
     QString res = "";
     for (int i=0;i<size;i++) {
         char h = num[i] >> 4;
-        h = (h > 0x09) ? h - 0x09 + 0x41 : h + 0x30;
+        h = (h > 0x09) ? h - 0x0a + 0x41 : h + 0x30;
         res.append(h);
         char l = num[i] & 0x0f;
-        l = (l > 0x09) ? l - 0x09 + 0x41 : l + 0x30;
+        l = (l > 0x09) ? l - 0x0a + 0x41 : l + 0x30;
         res.append(l);
     }
     return res;
