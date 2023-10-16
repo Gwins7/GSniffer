@@ -29,6 +29,10 @@ private slots:
 
     void on_PktTable_cellClicked(int row, int column);
 
+    void on_SrchFilter_returnPressed();
+
+    void on_SrchFilter_textChanged(const QString &arg1);
+
 private:
     Ui::MainWindow *ui;
     QVector<DataPkt> pkt_vec;
@@ -39,6 +43,7 @@ private:
     pcap_t *pcap_ptr;
     char err_buf[PCAP_ERRBUF_SIZE];
 
+    bool cap_status;
     int row_chosen;
 
 protected:

@@ -47,7 +47,7 @@ MainWindow::MainWindow(QWidget *parent)
     // function init
     cur_dev = 0;
     capThread *cap_thread = new capThread;
-    static bool cap_status = false;
+    cap_status = false;
 
     connect(ui->actionrunstop,&QAction::triggered,this,[=]{ // set action on run/stop
         cap_status = !cap_status; // on - off
@@ -310,6 +310,62 @@ void MainWindow::on_PktTable_cellClicked(int row, int column) // prepare tree wi
         ui->PktBrowser->setText((const QString)pkt_content_display);
     }
 }
+
+void MainWindow::on_SrchFilter_returnPressed()
+{
+    QString text = ui->SrchFilter->text();
+    text = text.toUpper();
+    QString target = "#";
+    if(text == "" || text == "UDP" || text == "TCP" || text == "ARP"|| text == "ICMP"){
+        ui->SrchFilter->setStyleSheet("QLineEdit {background-color: rgb(154,255,154);}");
+        target = text;
+    }else{
+        ui->SrchFilter->setStyleSheet("QLineEdit {background-color: rgb(250,128,114);}");
+    }
+    int count = 0;
+    int number = ui->PktTable->rowCount();
+    if(!cap_status && target != "#"){
+        if(target!=""){
+            for(int i = 0;i < number;i++){
+                if(ui->PktTable->item(i,4)->text() != target){
+                    ui->PktTable->setRowHidden(i,true);
+                }else{
+                    ui->PktTable->setRowHidden(i,false);
+                    count++;
+                }
+            }
+        }else{
+            int number = ui->PktTable->rowCount();
+            for(int i = 0;i < number;i++){
+                ui->PktTable->setRowHidden(i,false);
+                count++;
+            }
+        }
+    }
+
+    double res = 0;
+    if(number != 0)
+        res = (count*100.0)/number;
+    statusBar()->showMessage("Have show (" + QString::number(count) + ") " +QString::number(res,10,2) + "%");
+}
+
+/*
+ * on_lineEdit_textChanged
+ * when text at lineEdit changed,it will check input information is correct or not
+ * if it is corrected,the color is green or it will be red
+*/
+void MainWindow::on_SrchFilter_textChanged(const QString &arg1)
+{
+    QString text = arg1;
+    text = text.toLower();
+    if(text == "" || text == "udp" || text == "tcp" || text == "arp" || text == "icmp"){
+        ui->SrchFilter->setStyleSheet("QLineEdit {background-color: rgb(154,255,154);}");
+    }else{
+        ui->SrchFilter->setStyleSheet("QLineEdit {background-color: rgb(250,128,114);}");
+    }
+}
+
+
 
 QString MainWindow::HextoS(u_char *num,int size){ //hex-num to string
     QString res = "";
