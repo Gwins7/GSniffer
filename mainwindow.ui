@@ -60,6 +60,9 @@
       </item>
       <item>
        <widget class="QTreeWidget" name="PktTree">
+        <attribute name="headerVisible">
+         <bool>false</bool>
+        </attribute>
         <column>
          <property name="text">
           <string notr="true">1</string>
@@ -67,33 +70,12 @@
         </column>
        </widget>
       </item>
+      <item>
+       <widget class="QTextBrowser" name="PktBrowser"/>
+      </item>
      </layout>
     </item>
    </layout>
-  </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>800</width>
-     <height>18</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menuproject">
-    <property name="title">
-     <string>project</string>
-    </property>
-   </widget>
-   <widget class="QMenu" name="menurun">
-    <property name="title">
-     <string>control</string>
-    </property>
-    <addaction name="actionrunstop"/>
-    <addaction name="actionclear"/>
-   </widget>
-   <addaction name="menuproject"/>
-   <addaction name="menurun"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">

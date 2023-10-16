@@ -6,14 +6,6 @@ typedef unsigned short u_short;
 typedef unsigned int u_int;
 typedef unsigned long u_long;
 
-#define ETH_HDR_LEN 14
-#define IP_HDR_LEN 20
-#define TCP_HDR_LEN 20
-#define UDP_HDR_LEN 8
-#define ICMP_HDR_LEN 8
-#define ARP_HDR_LEN 28
-#define DNS_HDR_LEN 12
-
 // Ethernet header
 /*
 +-------------------+-----------------+------+
@@ -136,6 +128,7 @@ typedef struct icmp_hdr{ //>=8 bytes
 | type |protocol|e_len|ip_len|op_type|source mac|source ip|destination mac|destination ip|
 +------+--------+-----+------+-------+----------+---------+---------------+--------------+
 */
+
 typedef struct arp_hdr{   // 28 bytes
     u_short hardware_type;
     u_short protocol_type;
@@ -149,42 +142,5 @@ typedef struct arp_hdr{   // 28 bytes
     u_char dst_ip_addr[4];
 
 } arp_hdr_t;
-
-// dns
-/*
-+--------------------------+---------------------------+
-|           16 bit         |1b|4bit|1b|1b|1b|1b|3b|4bit|
-+--------------------------+--+----+--+--+--+--+--+----+
-|      identification      |QR| OP |AA|TC|RD|RA|..|Resp|
-+--------------------------+--+----+--+--+--+--+--+----+
-|         Question         |       Answer RRs          |
-+--------------------------+---------------------------+
-|     Authority RRs        |      Additional RRs       |
-+--------------------------+---------------------------+
-*/
-typedef struct dns_hdr{  //12 bytes
-    u_short ident;
-    u_short flags;
-    u_short question;
-    u_short answer;
-    u_short authority;
-    u_short additional;
-} dns_hdr_t;
-
-// dns question
-typedef struct dns_question{
-    // char* name;          // Non-fixed
-    u_short query_type;     // 2 byte
-    u_short query_class;    // 2 byte
-} dns_question_t;
-
-typedef struct dns_answer{
-    // char* name          // Non-fixed
-    u_short answer_type;   // 2 byte
-    u_short answer_class;  // 2 byte
-    u_int TTL;             // 4 byte
-    u_short data_len;    // 2 byte
-    //char* name           // Non-fixed
-} dns_answer_t;
 
 #endif // PKTFMT_H

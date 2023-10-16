@@ -54,8 +54,7 @@ int capThread::HandleEthPkt(const u_char *pkt_content, QString &info){
             int ip_protocol = HandleIpPkt(pkt_content,ip_pld_len);
             switch(ip_protocol){
                 case 1:{ //ICMP
-                    //todo
-                    return TYPE_ICMP;
+                return HandleIcmpPkt(pkt_content,info);
                 }
                 case 6:{ //TCP
                     return HandleTcpPkt(pkt_content,info,ip_pld_len);
@@ -90,10 +89,29 @@ int capThread::HandleTcpPkt(const u_char *pkt_content, QString &info, int ip_pld
     //pkt type_info in detail
     QString proSend = "";
     QString proRecv = "";
-    if (src_port == 443) {
+    switch (src_port)
+    {
+    case 443:{
         proSend = "(https)";
-    }else if (dst_port == 443){
+        break;
+        }
+    case 80:{
+        proSend = "(http)";
+        break;
+    }
+    default: break;
+    }
+    switch (dst_port)
+    {
+    case 443:{
         proRecv = "(https)";
+        break;
+    }
+    case 80:{
+        proRecv = "(http)";
+        break;
+    }
+    default: break;
     }
     info += QString::number(src_port) + proSend + "->" + QString::number(dst_port) + proRecv;
 
@@ -129,15 +147,13 @@ int capThread::HandleUdpPkt(const u_char *pkt_content, QString &info){
     u_short dst_port = ntohs(udp_hdr->dst_port);
 
     if (src_port == 53 || dst_port == 53) {
-        return TYPE_DNS; //todo
+        info += "DNS; ";
     }
-    else {
-        //udp_info
-        QString udp_info = QString::number(src_port) + "->" + QString::number(dst_port) + " " +
-                           "len = " + QString::number(ntohs(udp_hdr->data_len));
-        info += udp_info;
-        return TYPE_UDP;
-    }
+    //udp_info
+    QString udp_info = QString::number(src_port) + "->" + QString::number(dst_port) + " " +
+                        "len = " + QString::number(ntohs(udp_hdr->data_len));
+    info += udp_info;
+    return TYPE_UDP;
 }
 
 int capThread::HandleArpPkt(const u_char *pkt_content, QString &info){
@@ -146,9 +162,9 @@ int capThread::HandleArpPkt(const u_char *pkt_content, QString &info){
     u_short arp_op = ntohs(arp_hdr->op_code);
 
     //convert addr to QString
-    QString arp_src_ip_addr =  getIpAddr(arp_hdr->src_ip_addr);
-    QString arp_dst_ip_addr =  getIpAddr(arp_hdr->dst_ip_addr);
-    QString arp_src_eth_addr = getEthAddr(arp_hdr->src_eth_addr);
+    QString arp_src_ip_addr =  ConvertIpAddr(arp_hdr->src_ip_addr);
+    QString arp_dst_ip_addr =  ConvertIpAddr(arp_hdr->dst_ip_addr);
+    QString arp_src_eth_addr = ConvertEthAddr(arp_hdr->src_eth_addr);
 //    QString arp_dst_eth_addr = getEthAddr(arp_hdr->dst_eth_addr);
 
     QString arp_info;
@@ -158,6 +174,11 @@ int capThread::HandleArpPkt(const u_char *pkt_content, QString &info){
     info += arp_info;
     return TYPE_ARP;
 }
+
+int capThread::HandleIcmpPkt(const u_char *pkt_content, QString &info){
+
+}
+
 
 QString capThread::HextoS(u_char *num,int size){ //hex-num to string
     QString res = "";
@@ -172,7 +193,7 @@ QString capThread::HextoS(u_char *num,int size){ //hex-num to string
     return res;
 }
 
-QString capThread::getEthAddr(u_char *addr){
+QString capThread::ConvertEthAddr(u_char *addr){
     QString res = HextoS(addr,1) + ":" +
                   HextoS((addr+1),1) + ":" +
                   HextoS((addr+2),1) + ":" +
@@ -182,7 +203,7 @@ QString capThread::getEthAddr(u_char *addr){
     return res;
 }
 
-QString capThread::getIpAddr(u_char *addr){
+QString capThread::ConvertIpAddr(u_char *addr){
     QString res = QString::number(*addr) + "." +
                   QString::number(*(addr+1)) + "." +
                   QString::number(*(addr+2)) + "." +

@@ -42,6 +42,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->PktTable->setSelectionBehavior(QAbstractItemView::SelectRows); // select the whole row
     ui->PktTable->setItemDelegate(new ReadOnlyDelegate); //can't edit the pkttable
 
+    ui->PktTree->setHeaderHidden(true);
+
     // function init
     cur_dev = 0;
     capThread *cap_thread = new capThread;
@@ -153,16 +155,16 @@ void MainWindow::HandleMsg(DataPkt pkt){
     if (pkt_type == "TCP") color = QColor(216,191,216);
     else if (pkt_type == "UDP") color = QColor(144,238,144);
     else if (pkt_type == "ARP") color = QColor(238,138,0);
-    else if (pkt_type == "DNS") color = QColor(255,255,224);
+    else if (pkt_type == "ICMP") color = QColor(255,255,224);
     else color = QColor(255,218,185);
 
     //insert a pkt into PktTable
     ui->PktTable->setItem(pkt_count,0,new QTableWidgetItem(QString::number(pkt_count)));//No.
     ui->PktTable->setItem(pkt_count,1,new QTableWidgetItem(pkt.getTimestamp()));    //time
-    ui->PktTable->setItem(pkt_count,2,new QTableWidgetItem(pkt.getPktType() == "ARP"?pkt.getEthSrc():pkt.getIpSrc()));//src
-    ui->PktTable->setItem(pkt_count,3,new QTableWidgetItem(pkt.getPktType() == "ARP"?pkt.getEthDst():pkt.getIpDst()));//dst
+    ui->PktTable->setItem(pkt_count,2,new QTableWidgetItem(pkt.getPktType() == "ARP"?pkt.getEthInfo(INFO_ETH_ADDR_SRC):pkt.getIpInfo(INFO_ETH_ADDR_SRC)));//src
+    ui->PktTable->setItem(pkt_count,3,new QTableWidgetItem(pkt.getPktType() == "ARP"?pkt.getEthInfo(INFO_ETH_ADDR_DST):pkt.getIpInfo(INFO_ETH_ADDR_DST)));//dst
     ui->PktTable->setItem(pkt_count,4,new QTableWidgetItem(pkt.getPktType()));//protocol
-    ui->PktTable->setItem(pkt_count,5,new QTableWidgetItem(pkt.getDataLen()));//length
+    ui->PktTable->setItem(pkt_count,5,new QTableWidgetItem(QString::number(pkt.getDataLen())));//length
     ui->PktTable->setItem(pkt_count,6,new QTableWidgetItem(pkt.getInfo()));//info
     for (int i=0;i<7;i++){
         ui->PktTable->item(pkt_count,i)->setBackground(QBrush(color));
@@ -172,6 +174,108 @@ void MainWindow::HandleMsg(DataPkt pkt){
 
 void MainWindow::on_PktTable_cellClicked(int row, int column) // prepare tree widget
 {
+    if (row==row_chosen) return;
+    else {
+        ui->PktTree->clear();
+        ui->PktBrowser->clear();
+        row_chosen = row;
+//pkttree
+    //eth
+        QString eth_src = pkt_vec[row_chosen].getEthInfo(INFO_ETH_ADDR_SRC);
+        QString eth_dst = pkt_vec[row_chosen].getEthInfo(INFO_ETH_ADDR_DST);
+        QString eth_type = pkt_vec[row_chosen].getEthInfo(INFO_ETH_TYPE);
+        QString eth_tree_str = "Ethernet, Src:" + eth_src + " Dst:" + eth_dst;
+        QTreeWidgetItem *eth_tree_item = new QTreeWidgetItem(QStringList()<<eth_tree_str);
+        ui->PktTree->addTopLevelItem(eth_tree_item);
+        eth_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Destination: " + eth_dst));
+        eth_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Source: " + eth_src));
+        eth_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Type: " + eth_type));
+    //ip
+        if (pkt_vec[row_chosen].getPktType() == "TCP" ||
+            pkt_vec[row_chosen].getPktType() == "UDP" ||
+            pkt_vec[row_chosen].getPktType() == "ICMP"){
+            //ip info
+            QString ip_src = pkt_vec[row_chosen].getIpInfo(INFO_IP_ADDR_SRC);
+            QString ip_dst = pkt_vec[row_chosen].getIpInfo(INFO_IP_ADDR_DST);
+            QString ip_tree_str = "Internet Protocol Version 4, Src:" + ip_src + " Dst:" + ip_dst;
+            QTreeWidgetItem *ip_tree_item = new QTreeWidgetItem(QStringList()<<ip_tree_str);
+            ui->PktTree->addTopLevelItem(ip_tree_item);
 
+            ip_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Version: " + pkt_vec[row_chosen].getIpInfo(INFO_IP_VERSION)));
+            ip_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Header Length: " + pkt_vec[row_chosen].getIpInfo(INFO_IP_HEAD_LEN) + " bytes"));
+            ip_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Differentiated Services Field (TOS): " + pkt_vec[row_chosen].getIpInfo(INFO_IP_TOS)));
+            ip_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Total Length: " + pkt_vec[row_chosen].getIpInfo(INFO_IP_TOT_LEN)));
+            ip_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Identfication: " + pkt_vec[row_chosen].getIpInfo(INFO_IP_IDENT)));
+            ip_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Flags: " + pkt_vec[row_chosen].getIpInfo(INFO_IP_FLAGS)));
+            ip_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Fragment Offset: " + pkt_vec[row_chosen].getIpInfo(INFO_IP_OFFSET)));
+            ip_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Time to Live: " + pkt_vec[row_chosen].getIpInfo(INFO_IP_TTL)));
+            ip_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Protocol: " + pkt_vec[row_chosen].getIpInfo(INFO_IP_PROTOCOL)));
+            ip_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Header Checksum: " + pkt_vec[row_chosen].getIpInfo(INFO_IP_CHECKSUM)));
+            ip_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Source: " + ip_src));
+            ip_tree_item->addChild(new QTreeWidgetItem(QStringList() << "Destination: " + ip_dst));
+
+            //tcp
+            if (pkt_vec[row_chosen].getPktType() == "TCP"){
+
+            }
+
+            //udp
+            else if (pkt_vec[row_chosen].getPktType() == "UDP"){
+
+            }
+            
+            //icmp
+            else if (pkt_vec[row_chosen].getPktType() == "ICMP"){
+
+            }
+
+            //other
+            else {
+                    QString other_tree_str = "Other, Protocol: " + pkt_vec[row_chosen].getIpInfo(INFO_IP_PROTOCOL);
+                    QTreeWidgetItem *other_tree_item = new QTreeWidgetItem(QStringList()<<other_tree_str);
+                    ui->PktTree->addTopLevelItem(other_tree_item);
+            }
+
+        }
+    //arp
+        else if (pkt_vec[row_chosen].getPktType() == "ARP"){
+
+
+        }
+    //others
+        else {
+            QString other_tree_str = "Other";
+            QTreeWidgetItem *other_tree_item = new QTreeWidgetItem(QStringList()<<other_tree_str);
+            ui->PktTree->addTopLevelItem(other_tree_item);
+        }
+//pktbrowser
+        QString pkt_content_display = "";
+        int seg_limit = 2;
+        int line_limit = 16;
+        u_int pkt_len = pkt_vec[row_chosen].getDataLen();
+        u_char *pkt_content_ptr = pkt_vec[row_chosen].getPktContent();
+        for (u_int i = 0;i < pkt_len; i++){
+            pkt_content_display += HextoS(pkt_content_ptr+i,1);
+            if (i % line_limit == line_limit-1){
+                pkt_content_display += "\n";
+            }
+            else if (i % seg_limit == seg_limit-1){
+                pkt_content_display += " ";
+            }
+        }
+        ui->PktBrowser->setText((const QString)pkt_content_display);
+    }
 }
 
+QString MainWindow::HextoS(u_char *num,int size){ //hex-num to string
+    QString res = "";
+    for (int i=0;i<size;i++) {
+        char h = num[i] >> 4;
+        h = (h > 0x09) ? h - 0x0a + 0x41 : h + 0x30;
+        res.append(h);
+        char l = num[i] & 0x0f;
+        l = (l > 0x09) ? l - 0x0a + 0x41 : l + 0x30;
+        res.append(l);
+    }
+    return res;
+}

@@ -40,5 +40,8 @@ private:
     char err_buf[PCAP_ERRBUF_SIZE];
 
     int row_chosen;
+
+protected:
+    QString HextoS(u_char *num,int size);
 };
 #endif // MAINWINDOW_H

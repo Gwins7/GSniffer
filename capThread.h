@@ -19,6 +19,7 @@ public:
     int HandleTcpPkt(const u_char *pkt_content, QString &info, int ip_pld_len);
     int HandleUdpPkt(const u_char *pkt_content, QString &info);
     int HandleArpPkt(const u_char *pkt_content, QString &info);
+    int HandleIcmpPkt(const u_char *pkt_content, QString &info);
 
 signals: // send pkt_data across the threads
     void SendMsg(DataPkt pkt);
@@ -33,8 +34,8 @@ private:
     char time_str[16];
 
 protected:
-    QString getEthAddr(u_char *addr);
-    QString getIpAddr(u_char *addr);
+    QString ConvertEthAddr(u_char *addr);
+    QString ConvertIpAddr(u_char *addr);
     static QString HextoS (u_char *num,int size);
 };
 

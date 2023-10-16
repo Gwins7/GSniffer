@@ -2,15 +2,8 @@
 #define DATAPKT_H
 
 #include "pktfmt.h"
+#include "macro.h"
 #include <QString>
-
-#define TYPE_ARP 1
-#define TYPE_ICMP 2
-#define TYPE_TCP 3
-#define TYPE_UDP 4
-#define TYPE_DNS 5
-#define TYPE_TLS 6
-#define TYPE_SSL 7
 
 class DataPkt
 {
@@ -20,7 +13,7 @@ public:
     u_char *getPktContent();
     void FreePktContent();
     void AllocPktContent(const u_char *pkt_content, int size);
-    QString getDataLen() const;
+    u_int getDataLen() const;
     void setDataLen(u_int newDataLen);
     QString getTimestamp() const;
     void setTimestamp(const QString &new_timestamp);
@@ -29,10 +22,12 @@ public:
     QString getPktType() const;
     void setPktType(int new_pkt_type);
 
-    QString getEthSrc();
-    QString getEthDst();
-    QString getIpSrc();
-    QString getIpDst();
+    QString getEthInfo(int info_type);
+    QString getIpInfo(int info_type);
+    QString getArpInfo(int info_type);
+    QString getTcpInfo(int info_type);
+    QString getUdpInfo(int info_type);
+    QString getIcmpInfo(int info_type);
 
 private:
     u_char *pkt_content;
@@ -42,8 +37,8 @@ private:
     int pkt_type;
 
 protected:
-    QString getEthAddr(u_char *addr);
-    QString getIpAddr(u_char *addr);
+    QString ConvertEthAddr(u_char *addr);
+    QString ConvertIpAddr(u_char *addr);
     static QString HextoS (u_char *num,int size);
 };
 
