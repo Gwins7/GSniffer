@@ -58,6 +58,8 @@ MainWindow::MainWindow(QWidget *parent)
             ui->PktTable->setRowCount(0);
             pkt_count = 0;
             row_chosen = -1;
+            ui->PktTree->clear();
+            ui->PktBrowser->clear();
             for (int i=0; i<pkt_vec.size();i++){
                 this->pkt_vec[i].FreePktContent();
             }
@@ -94,6 +96,8 @@ MainWindow::MainWindow(QWidget *parent)
         ui->PktTable->setRowCount(0);
         pkt_count = 0;
         row_chosen = -1;
+        ui->PktTree->clear();
+        ui->PktBrowser->clear();
     });
 
     // pkt: capThread::SendMsg -> MainWindow::HandleMsg
