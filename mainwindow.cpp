@@ -322,7 +322,7 @@ void MainWindow::on_SrchFilter_returnPressed()
     QString text = ui->SrchFilter->text();
     text = text.toUpper();
     QString target = "#";
-    if(text == "" || text == "UDP" || text == "TCP" || text == "ARP"|| text == "ICMP"){
+    if(text == "" || text == "UDP" || text == "TCP" || text == "ARP"|| text == "ICMP" || text == "ETH_OTHER" || text == "IP_OTHER"){
         ui->SrchFilter->setStyleSheet("QLineEdit {background-color: rgb(154,255,154);}");
         target = text;
     }else{
@@ -363,8 +363,8 @@ void MainWindow::on_SrchFilter_returnPressed()
 void MainWindow::on_SrchFilter_textChanged(const QString &arg1)
 {
     QString text = arg1;
-    text = text.toLower();
-    if(text == "" || text == "udp" || text == "tcp" || text == "arp" || text == "icmp"){
+    text = text.toUpper();
+    if(text == "" || text == "UDP" || text == "TCP" || text == "ARP"|| text == "ICMP" || text == "ETH_OTHER" || text == "IP_OTHER"){
         ui->SrchFilter->setStyleSheet("QLineEdit {background-color: rgb(154,255,154);}");
     }else{
         ui->SrchFilter->setStyleSheet("QLineEdit {background-color: rgb(250,128,114);}");
