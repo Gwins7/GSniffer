@@ -64,6 +64,8 @@ QString DataPkt::getPktType() const
     case TYPE_ICMP: return "ICMP";
     case TYPE_TCP: return "TCP";
     case TYPE_UDP: return "UDP";
+    case TYPE_ETH_OTHER: return "ETH_OTHER";
+    case TYPE_IP_OTHER: return "IP_OTHER";
     default: return "";
     }
 }

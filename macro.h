@@ -14,7 +14,8 @@
 #define TYPE_ICMP 2
 #define TYPE_TCP 3
 #define TYPE_UDP 4
-
+#define TYPE_ETH_OTHER 5
+#define TYPE_IP_OTHER 6
 //eth info
 #define INFO_ETH_ADDR_SRC 0
 #define INFO_ETH_ADDR_DST 1

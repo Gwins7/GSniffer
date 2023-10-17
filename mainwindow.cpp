@@ -160,13 +160,14 @@ void MainWindow::HandleMsg(DataPkt pkt){
     else if (pkt_type == "UDP") color = QColor(144,238,144);
     else if (pkt_type == "ARP") color = QColor(238,138,0);
     else if (pkt_type == "ICMP") color = QColor(255,255,224);
-    else color = QColor(255,218,185);
+    else color = QColor(255,218,185); //OTHER
+
 
     //insert a pkt into PktTable
     ui->PktTable->setItem(pkt_count,0,new QTableWidgetItem(QString::number(pkt_count)));//No.
     ui->PktTable->setItem(pkt_count,1,new QTableWidgetItem(pkt.getTimestamp()));    //time
-    ui->PktTable->setItem(pkt_count,2,new QTableWidgetItem(pkt.getPktType() == "ARP"?pkt.getEthInfo(INFO_ETH_ADDR_SRC):pkt.getIpInfo(INFO_ETH_ADDR_SRC)));//src
-    ui->PktTable->setItem(pkt_count,3,new QTableWidgetItem(pkt.getPktType() == "ARP"?pkt.getEthInfo(INFO_ETH_ADDR_DST):pkt.getIpInfo(INFO_ETH_ADDR_DST)));//dst
+    ui->PktTable->setItem(pkt_count,2,new QTableWidgetItem((pkt.getPktType() == "ARP" || pkt.getPktType() == "ETH_OTHER")?pkt.getEthInfo(INFO_ETH_ADDR_SRC):pkt.getIpInfo(INFO_ETH_ADDR_SRC)));//src
+    ui->PktTable->setItem(pkt_count,3,new QTableWidgetItem((pkt.getPktType() == "ARP" || pkt.getPktType() == "ETH_OTHER")?pkt.getEthInfo(INFO_ETH_ADDR_DST):pkt.getIpInfo(INFO_ETH_ADDR_DST)));//dst
     ui->PktTable->setItem(pkt_count,4,new QTableWidgetItem(pkt.getPktType()));//protocol
     ui->PktTable->setItem(pkt_count,5,new QTableWidgetItem(QString::number(pkt.getDataLen())));//length
     ui->PktTable->setItem(pkt_count,6,new QTableWidgetItem(pkt.getInfo()));//info

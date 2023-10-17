@@ -54,7 +54,7 @@ int capThread::HandleEthPkt(const u_char *pkt_content, QString &info){
             int ip_protocol = HandleIpPkt(pkt_content,ip_pld_len);
             switch(ip_protocol){
                 case 1:{ //ICMP
-                return HandleIcmpPkt(pkt_content,info);
+                    return HandleIcmpPkt(pkt_content,info);
                 }
                 case 6:{ //TCP
                     return HandleTcpPkt(pkt_content,info,ip_pld_len);
@@ -62,12 +62,13 @@ int capThread::HandleEthPkt(const u_char *pkt_content, QString &info){
                 case 17:{//UDP
                     return HandleUdpPkt(pkt_content,info);
                 }
+                default:return TYPE_IP_OTHER;
             }
         }
         case 0x0806:{ //arp
             return HandleArpPkt(pkt_content,info);
         }
-        default:return 0;
+        default:return TYPE_ETH_OTHER;
     }
     return 0; // you shouldn't be here
 }
