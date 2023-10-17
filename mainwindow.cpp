@@ -198,7 +198,8 @@ void MainWindow::on_PktTable_cellClicked(int row, int column) // prepare tree wi
     //ip
         if (pkt_vec[row_chosen].getPktType() == "TCP" ||
             pkt_vec[row_chosen].getPktType() == "UDP" ||
-            pkt_vec[row_chosen].getPktType() == "ICMP"){
+            pkt_vec[row_chosen].getPktType() == "ICMP" ||
+            pkt_vec[row_chosen].getPktType() == "IP_OTHER"){
             //ip info
             QString ip_src = pkt_vec[row_chosen].getIpInfo(INFO_IP_ADDR_SRC);
             QString ip_dst = pkt_vec[row_chosen].getIpInfo(INFO_IP_ADDR_DST);
